@@ -1,0 +1,486 @@
+<html>
+<head>
+<title> CS585: License Plate Recognition Project Student: Juan Santana  </title>
+<style>
+<!--
+body{
+font-family: 'Trebuchet MS', Verdana;
+}
+p{
+font-family: 'Trebuchet MS', Times;
+margin: 10px 10px 15px 20px;
+}
+h3{
+margin: 5px;
+}
+h2{
+margin: 10px;
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+h1{
+margin: 10px 0px 0px 20px;
+}
+div.main-body{
+align:center;
+margin: 30px;
+}
+hr{
+margin:20px 0px 20px 0px;
+}
+div.a {
+  text-indent: 40px;
+}
+-->
+</style>
+</head>
+
+<body>
+<center>
+<a href="http://www.bu.edu"><img border="0" src="http://www.cs.bu.edu/fac/betke/images/bu-logo.gif"
+width="119" height="120"></a>
+</center>
+
+<h1>License Plate Recognition Project</h1>
+<p> 
+ CS 585 Project <br>
+ Juan Santana <br>
+ Team Member: Ai Hue Nguyen <br>
+ May 1, 2020 
+</p>
+
+<div class="main-body">
+<hr>
+<h2> Problem Definition / Project Task </h2>
+
+<div class="a">  
+
+<p>Develop a character recognition program to recognize the letters and numbers on license plates. We can treat the characters as binary images and use correlation, Euler number, and/or thinning techniques for recognition. 
+We may want to simplify the problem by only trying to recognize certain fonts or just digits.
+</div>
+
+<p>
+    
+<hr>
+
+<h2> Background </h2>
+
+<div class="a">  
+
+<p> License plate recognition is frequently used in practice for various purposes, such as electronic toll collection and law enforcement purposes, including to check if a vehicle is registered or licensed.  
+Additionally, there have been many papers written and studies conducted on license plate recognition.  
+One such paper is “License Plate Recognition (LPR): A Review with Experiments for Malaysia Case Study” (2013), which can be found <a href="https://arxiv.org/pdf/1401.5559.pdf"> here</a>. 
+This paper outlines common techniques for license plate recognition, including many that we have discussed in class, such as grayscaling, binarization, filtering, thresholding, and edge detection. 
+We may choose to use some of these techniques in our implementation. This paper also displays the results of a simple experiment in which the researchers aimed to identify the license plate number on a Malaysian car using the techniques described. 
+
+<p>Another study on license plate recognition that we discovered is  “A Real-Time Automatic Plate Recognition System Based on Optical Character Recognition and Wireless Sensor Networks for ITS” (2019), which can be found <a href="https://www.mdpi.com/1424-8220/20/1/55/pdf"> here</a>. 
+This paper proposes an intelligent vehicle identification system, which makes use of an intelligent parking system named Smart Parking Service (SPANS) in order to detect if a parking spot in a parking lot is available and identifies the license plate numbers of the vehicles moving around in the lot as well as currently parked in the lot in real-time. 
+A particularly useful part of this paper may be Section 3, which provides a detailed description of the algorithm that the system uses to perform license plate recognition. 
+Furthermore, both papers include examples of output images at different stages of the recognition process, which should help us to visualize what our images should look like at every step of the process. 
+
+</div>
+
+
+<hr>
+
+<h2> Methods and Implementations </h2>
+
+<div class="a">  
+
+<p> As stated in the problem definition, we intend on tackling this problem by using what we learned from this course so far such as binarizing the image, 
+and then using morphological operations and contour properties. We initially thought of beginning by running a connected component analysis on the license plate region 
+to find character-like sections of the image and make a function to extract each of the license plate characters from the binary image. The program would then print out 
+the recognized characters from the license plate image. To avoid any complications and to simplify our problem, we’ve decided to use an image dataset where the license plate is 
+clearly shown so the algorithm doesn’t have to analyze the entire image to find the rectangular license plate.
+</div>
+
+<div class="a">  
+
+<p> Unfortunately, we haven't been able to fully solve the defined problem as we ultimately ended up coming up with three different methods on how to 
+solve this problem; some more successful than others. The first two methods involve a form of template matching 
+very similar to the method we used in back HW 2. The third method involves the use of OpenCV's K's Nearest Neighbors (KNN) algorithm to implement 
+some machine learning so the code can recognize license plate characters more accurately; as well as referencing
+a <a href="https://github.com/MicrocontrollersAndMore/OpenCV_3_KNN_Character_Recognition_Cpp/tree/master/GenData"> GitHub repo</a>.
+</div>
+
+<p> <b> Method 1 General Outline of Code</b> </p>
+
+<ol>
+
+<li> Put the input image through some preprocessing which means converting the image to grayscale and get the threshold of that grayscale image. 
+Each character in the template image dataset (letters A-Z and digits 0-9) are also put through this preprocessing.</li>
+
+<li> Next find the six largest contours in the license plate image. The number of largest contours we want to find ultimately depends on the license plate 
+as US license plates' character length can vary from 5 to 8 characters. </li>
+
+<li> The code then finds the largest contour for each of the template images; we expected the largest contour in each of the template images to be the character in the image. </li>
+
+<li> Matching Method is then applied to calculate contour images from the source image, binarized version of the source image and a template image. This is repeated for each image in the template dataset. </li>
+
+<li> Next matchShapes function from the OpenCV library is used to calculate how similar each correspondent template contour and character contour are.
+This is repeated for each image in the template dataset. Each calculation is stored in an array. </li>
+
+<li> The maximum value is chosen from the array and depending on the value's index, 
+it pushes back the character it thinks it recognized from the license plate image.  </li>
+
+</ol> 
+
+</p>
+
+<p> <b> Method 2 General Outline of Code</b> </p>
+
+<ol>
+
+<li> Method 2 starts off with the first step that Method 1 begins with. </li>
+
+<li> Instead of using the Matching Method and matchShapes, Method 2 decides to calculate the correlation between the binarized image and the template image. 
+This is done by calculating a value for every possible location of the template image 
+over the source image; a higher value indicates a better match. </li>
+
+<li> The above step is repeated for each image in the template dataset. Each calculation is stored in another array.</li>
+
+<li> The maximum value is chosen from the array and depending on the value's index, 
+it pushes back the character it thinks it recognized from the license plate image. </li>
+
+</ol> 
+
+</p>
+
+<p> <b> Method 3 General Outline of Code</b> </p>
+
+<ol>
+
+<li> Prior to putting the source image through preprocessing, including blurring in this case, 
+the code first reads in the classifications and images files in order to instantiate OpenCV's KNN object. </li>
+
+<li> After the preprocessing, we find the contours in the binarized image
+and go through a loop where the DataContour object is started up to store all of the contours and get the bounding rectangle in order to 
+calculate the contour area. </li>
+
+<li> The code withers down the number of contours to the contour of possible characters. 
+This is done by seeing if the contour's area is within a certain size. 
+If they meet the condition then the contours are kept while the rest are discarded.</li>
+
+<li> We then sort the contours from left to right to prep for the characters to be recognized/read from left to right.</li>
+
+<li> For each of the validated contours, the code draws a rectangle around it and resized and converted to a float to prep for the KNN method.</li>
+
+<li> OpenCV's KNN algorithm is finally used where the images and classification files are used to find the "nearest neighbors" or closest match to the character in the validated contours.  </li>
+
+<li> The algorithm then appends all the characters that KNN recognized from the contours in a string and that string is then output as the characters that the code recognized from License Plate Image. 
+The license plate image with the rectangles on the contour is also put out. </li>
+
+</ol> 
+
+</p>
+
+<div class="a">  
+
+<p> It should be noted that we initially only wanted to use Method 1 or 2 for coding this project but neither yielded satisfying results. 
+Template matching can only take us but so far. We ultimately came to the conclusion that the project is very difficult to solve without 
+implementing some form of machine learning to recognize the license plate characters. Thus we came across more research supporting this 
+idea of machine learning such as this <a href="https://www.researchgate.net/publication/319944066_Histogram_based_vehicle_license_plate_recognition_with_KNN_method"> article</a>.
+It was thanks to "Histogram Based Vehicle License Plate Recognition with KNN Method" (2017) that we came up with the idea to use <a href="https://docs.opencv.org/master/d5/d26/tutorial_py_knn_understanding.html"> the KNN Method</a> and 
+luckily for us OpenCV has <a href="https://docs.opencv.org/2.4/modules/ml/doc/k_nearest_neighbors.html"> its own KNN function</a>. 
+However to use the KNN method, we needed  training data on potential characters that can be part of a license plate number and due to our time 
+constraints, we refer to this GitHub repo to use its classifications and image XML files where the ASCII value of a character from its <a href="https://github.com/MicrocontrollersAndMore/OpenCV_3_KNN_Character_Recognition_Cpp/blob/master/GenData/training_chars.png"> Training Image</a> 
+is appended to an integer list stored in an XML classifications file 
+while the images XML file stores each contour's specific image data. Having this data, we were able to come up with Method 3 and although it isn't perfect or accurate, 
+it's definitely a step in the right direction.
+</div>
+
+
+<hr>
+
+<h2>Image Dataset Input / Template Image Dataset</h2>
+
+<div class="a">  
+
+<p> For the sake of consistency, we decided that our input image dataset would be of images of license plates from the United States. 
+Thus, we’ve gotten a license plate image from each state in the US which we found <a href="https://www.kaggle.com/mobassir/fifty-states-car-license-plates-dataset/data"> here</a>.
+
+</div>
+
+<p>
+<table>
+<tr><td colspan=5><center><h3>Images from the Dataset</h3></center></td></tr>
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Alabama.jpg" alt = "Alabama License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Alaska.jpg" alt = "Alaska License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Arizona.jpg" alt = "Arizona License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Arkansas.jpg" alt = "Arkansas License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/California.jpg" alt = "California License Plate"/> </td> 
+</tr> 
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Colorado.jpg" alt = "Colorado License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Connecticut.jpg" alt = "Connecticut License Plate"/> </td>
+  <td> <img height="150" src="images/Fifty States License Plates/Delaware.jpg" alt = "Delaware License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/DistrictOfColumbia.jpg" alt = "District Of Columbia License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Florida.jpg" alt = "Florida License Plate"/> </td> 
+</tr> 
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Georgia.jpg" alt = "Georgia License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Guam.jpg" alt = "Guam License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Hawaii.jpg" alt = "Hawaii License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Idaho.jpg" alt = "Idaho License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Illinois.jpg" alt = "Illinois License Plate"/> </td> 
+</tr>  
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Indiana.jpg" alt = "Indiana License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Iowa.jpg" alt = "Iowa License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Kansas.jpg" alt = "Kansas License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Kentucky.jpg" alt = "Kentucky License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Louisiana.jpg" alt = "Louisiana License Plate"/> </td> 
+</tr> 
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Maine.jpg" alt = "Maine License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Maryland.jpg" alt = "Maryland License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Massachusetts.jpg" alt = "Massachusetts License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Michigan.jpg" alt = "Michigan License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Minnesota.jpg" alt = "Minnesota License Plate"/> </td> 
+</tr> 
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Mississippi.jpg" alt = "Mississippi License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Missouri.jpg" alt = "Missouri License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Montana.jpg" alt = "Montana License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Nebraska.jpg" alt = "Nebraska License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Nevada.jpg" alt = "Nevada License Plate"/> </td> 
+</tr> 
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/NewHampshire.jpg" alt = "New Hampshire License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/NewJersey.jpg" alt = "New Jersey License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/NewMexico.jpg" alt = "New Mexico License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/NewYork.jpg" alt = "New York License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/NorthCarolina.jpg" alt = "North Carolina License Plate"/> </td> 
+</tr>
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/NorthDakota.jpg" alt = "North Dakota License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Ohio.jpg" alt = "Ohio License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Oklahoma.jpg" alt = "Oklahoma License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Oregon.jpg" alt = "Oregon License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Pennsylvania.jpg" alt = "Pennsylvania License Plate"/> </td> 
+</tr>
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/PuertoRico.jpg" alt = "Puerto Rico License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/RhodeIsland.jpg" alt = "Rhode Island License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/SouthCarolina.jpg" alt = "South Carolina License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/SouthDakota.jpg" alt = "South Dakota License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Tennessee.jpg" alt = "Tennessee License Plate"/> </td> 
+</tr>
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/Texas.jpg" alt = "Texas License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Utah.jpg" alt = "Utah License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Vermont.jpg" alt = "Vermont License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Virginia.jpg" alt = "Virginia License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Washington.jpg" alt = "Washington License Plate"/> </td> 
+</tr> 
+<tr>
+  <td> <img height="210" src="images/Fifty States License Plates/WestVirginia.jpg" alt = "West Virginia License Plate"/> </td> 
+  <td> <img height="210" src="images/Fifty States License Plates/Wisconsin.jpg" alt = "Wisconsin License Plate"/> </td>
+  <td> <img height="210" src="images/Fifty States License Plates/Wyoming.jpg" alt = "Wyoming License Plate"/> </td> 
+</tr> 
+</table>
+</p>
+
+<div class="a">  
+
+<p> Since we initially went with template matching, we needed a template image dataset and thus we decided
+to use a common character font found in most US license plates which we found <a href="https://fontmeme.com/fonts/license-plate-usa-font/?fbclid=IwAR0wXxXBQ6iLqbd2uf4Mkj9COEXDL-Xyblm8XLGfdtOlmLVR8rDfRKb53eI#previewtool"> here</a>.
+
+</div>
+<p>
+<table>
+<tr><td colspan=6><center><h3>Images from Template Dataset</h3></center></td></tr>
+<tr>
+  <td> <img height="100" src="images/Templates/A.jpg" alt = "Template Image for A"/> </td> 
+  <td> <img height="100" src="images/Templates/B.jpg" alt = "Template Image for B"/> </td>
+  <td> <img height="100" src="images/Templates/C.jpg" alt = "Template Image for C"/> </td> 
+  <td> <img height="100" src="images/Templates/D.jpg" alt = "Template Image for D"/> </td>
+  <td> <img height="100" src="images/Templates/E.jpg" alt = "Template Image for E"/> </td> 
+  <td> <img height="100" src="images/Templates/F.jpg" alt = "Template Image for F"/> </td> 
+  <td> <img height="100" src="images/Templates/G.jpg" alt = "Template Image for G"/> </td>
+  <td> <img height="100" src="images/Templates/H.jpg" alt = "Template Image for H"/> </td> 
+  <td> <img height="100" src="images/Templates/I.jpg" alt = "Template Image for I"/> </td>
+  <td> <img height="100" src="images/Templates/J.jpg" alt = "Template Image for J"/> </td> 
+  <td> <img height="100" src="images/Templates/K.jpg" alt = "Template Image for K"/> </td> 
+  <td> <img height="100" src="images/Templates/L.jpg" alt = "Template Image for L"/> </td>
+</tr> 
+<tr>
+  <td> <img height="100" src="images/Templates/M.jpg" alt = "Template Image for M"/> </td> 
+  <td> <img height="100" src="images/Templates/N.jpg" alt = "Template Image for N"/> </td>
+  <td> <img height="100" src="images/Templates/O.jpg" alt = "Template Image for O"/> </td> 
+  <td> <img height="100" src="images/Templates/P.jpg" alt = "Template Image for P"/> </td> 
+  <td> <img height="100" src="images/Templates/Q.jpg" alt = "Template Image for Q"/> </td>
+  <td> <img height="100" src="images/Templates/R.jpg" alt = "Template Image for R"/> </td> 
+  <td> <img height="100" src="images/Templates/S.jpg" alt = "Template Image for S"/> </td>
+  <td> <img height="100" src="images/Templates/T.jpg" alt = "Template Image for T"/> </td> 
+  <td> <img height="100" src="images/Templates/U.jpg" alt = "Template Image for U"/> </td> 
+  <td> <img height="100" src="images/Templates/V.jpg" alt = "Template Image for V"/> </td>
+  <td> <img height="100" src="images/Templates/W.jpg" alt = "Template Image for X"/> </td> 
+  <td> <img height="100" src="images/Templates/X.jpg" alt = "Template Image for Y"/> </td>
+</tr> 
+
+<tr>
+  <td> <img height="100" src="images/Templates/Y.jpg" alt = "Template Image for Z"/> </td> 
+  <td> <img height="100" src="images/Templates/Z.jpg" alt = "Template Image for Z"/> </td> 
+  <td> <img height="100" src="images/Templates/0.jpg" alt = "Template Image for 0"/> </td>
+  <td> <img height="100" src="images/Templates/1.jpg" alt = "Template Image for 1"/> </td> 
+  <td> <img height="100" src="images/Templates/2.jpg" alt = "Template Image for 2"/> </td>
+  <td> <img height="100" src="images/Templates/3.jpg" alt = "Template Image for 3"/> </td> 
+  <td> <img height="100" src="images/Templates/4.jpg" alt = "Template Image for 4"/> </td> 
+  <td> <img height="100" src="images/Templates/5.jpg" alt = "Template Image for 5"/> </td>
+  <td> <img height="100" src="images/Templates/6.jpg" alt = "Template Image for 6"/> </td> 
+  <td> <img height="100" src="images/Templates/7.jpg" alt = "Template Image for 7"/> </td>
+  <td> <img height="100" src="images/Templates/8.jpg" alt = "Template Image for 8"/> </td> 
+  <td> <img height="100" src="images/Templates/9.jpg" alt = "Template Image for 9"/> </td> 
+</tr>
+</table>
+</p>
+
+<hr>
+
+<h2>Experiment Results</h2>
+
+<div class="a">  
+
+<p> There was little success with the first two methods as
+some or most of the characters from the license plate image were labeled correctly but was only recognize one or two characters from the image at most. 
+
+</div>
+
+<p> <b> Methods 1 & 2 Results</b> </p>
+
+<p> 
+
+<table>
+<tr><td colspan=2><center><h3>Output Images</h3></center></td></tr>
+<tr>
+  <td> <img height="350" src="images/Results/Methods 1-2/Arizona Output.png" alt = "Arizona License Plate Image Output"/> </td> 
+  <td> <img height="350" src="images/Results/Methods 1-2/Delaware Output.png" alt = "Delaware License Plate Image Output"/> </td>
+</tr> 
+<tr>
+  <td> <img height="350" src="images/Results/Methods 1-2/District of Columbia Output.png" alt = "District of Columbia License Plate Image Output"/> </td>
+  <td> <img height="350" src="images/Results/Methods 1-2/Oregon Output.png" alt = "Oregon License Plate Image Output"/> </td>
+</tr> 
+</table> 
+
+</p>
+
+<p> <b> Method 3 Results</b> </p>
+
+<div class="a">  
+
+<p> As for this method, the labeling of the characters from the license plate images leaves much to be desired as 
+contours around or outside of the characters were labeled. However the characters recognized outputted weren't unreadable characters
+unlike the outputs from the first two methods.
+
+</div>
+
+<p> 
+
+<table>
+<tr><td colspan=2><center><h3>Output Images</h3></center></td></tr>
+<tr>
+  <td> <img height="250" src="images/Results/Method 3/Guam Output.png" alt = "Guam License Plate Image Output"/> </td> 
+  <td> <img height="250" src="images/Results/Method 3/New Mexico Output.png" alt = "New Mexico License Plate Image Output"/> </td>
+</tr> 
+<tr>
+  <td> <img height="250" src="images/Results/Method 3/Ohio Output.png" alt = "Ohio License Plate Image Output"/> </td>
+  <td> <img height="250" src="images/Results/Method 3/Puerto Rico Output.png" alt = "Puerto Rico License Plate Image Output"/> </td>
+</tr> 
+</table>  
+
+</p>
+
+
+<p>Note: We also want to recognize the state from where the license is from but this proved to be difficult as the letter font for the state varies from image to image. 
+
+<hr>
+
+<h2>Experiment Variables</h2>
+<p>
+Experiment Environment: Windows 7 Ultimate x64 Machine </br>
+Applications: Visual Studio 2017 Community Version, OpenCV 3.2 / 3.3, C++ Programming Language </br> 
+Average Exection Time of Code for Methods 1 & 2(for One Image): Approx. 27 seconds </br> 
+Average Exection Time of Code for Method 3(for One Image): Approx. 8 seconds </br> 
+Process Memory Rate (Methods 1 & 2): 13 MBs/second </br> 
+Process Memory Rate (Method 3): 5.1 MBs/second </br> 
+CPU (% of all processors) (Methods 1 & 2): approx. 90% </br>
+CPU (% of all processors) (Method 3): approx. 12% </br>
+Setting: Remotely at Home </br>
+</p>
+
+
+
+<hr>
+<h2> Discussion </h2>
+
+<p> Discussing our results:
+
+<div class="a">  
+
+<p> For methods 1 and 2, template matching can be very sensitive so choosing the right template images is crucial. 
+The labeling function did an alright job in identifying some or most of the characters in the plate image. 
+However for the most part, the code here is long and repetitive thus taking up a lot of memory when executing. 
+Even if we were to get the code to recognize all the characters in the images, 
+template matching isn't so applicable to all types of license plates as they vary in color, fonts, sizes, and digits. 
+If anything doing these methods made it clear to us that machine learning is a needed part in solving this problem. 
+
+<p> Concerning method 3, the code is considerably better as it doesn't consume much memory and is capable of recognizing
+characters from the license plate image through the process to find contour containing the characters needs to a lot of work as the others contours besides the characters were recognized. 
+If given enough data, we think incorporating the labeling function from Methods 1 & 2 in this method and hopefully get better results.
+We can also use a different training image that has a font similar to license plate characters (like the one shown below) and use that data for the KNN method instead and hopefully that can yield better results.
+
+</div>
+
+<td> <img height="200" class="center" src="images/Templates/USALicensePlateFont.jpg" alt = "License Plate Font Training Image for Machine Learning"/> </td> 
+
+
+</p>
+
+
+<hr>
+
+
+<h2> Conclusions </h2>
+
+<div class="a">  
+
+<p> The experiment results show clearly that this project is a machine learning project just as much as it is a computer vision project.
+Working remotely from home and time constraints made the project even more difficult though we would've loved to have more time to work on this project. 
+As for ways to improve, we think we should've worked on improving the preprocessing to filter out any non-characters from the license plate image and 
+obviously incorporate more machine learning or using a neural model. Ideally, had we taken both CS 585 and CS 440 (or CS 542), this project would've been perfect for us.
+
+</div>
+
+
+<hr>
+<h2> Credits and Bibliography </h2>
+<li> "CAS CS 585 Image and Video Computing: Lectures 3-4, 7-8" by Prof. Margrit Betke</li>
+<li> CAS CS 585 Image and Video Computing: Labs 2, 4 & 5</li>
+<li> Discussed with teammate Ai Hue Nyguen, TA Yifu Hu, and Prof. Margrit Betke</li>
+
+<li> <a href="https://arxiv.org/pdf/1401.5559.pdf"> “License Plate Recognition (LPR): A Review with Experiments for Malaysia Case Study” (2013) </a><br>
+<li> <a href="https://www.mdpi.com/1424-8220/20/1/55/pdf"> “A Real-Time Automatic Plate Recognition System Based on Optical Character Recognition and Wireless Sensor Networks for ITS” (2019)</a><br>
+<li> <a href="https://www.kaggle.com/mobassir/fifty-states-car-license-plates-dataset/data"> US License Plate Image Dataset</a><br>
+<li> <a href="https://fontmeme.com/fonts/license-plate-usa-font/?fbclid=IwAR0wXxXBQ6iLqbd2uf4Mkj9COEXDL-Xyblm8XLGfdtOlmLVR8rDfRKb53eI#previewtool"> License Plate Font for Template Dataset</a><br>
+<li> <a href="https://github.com/MicrocontrollersAndMore/OpenCV_3_KNN_Character_Recognition_Cpp/tree/master/GenData"> KNN Character Recognition: Generate Data for Image Training GitHub Repo</a><br>
+<li> <a href="https://www.researchgate.net/publication/319944066_Histogram_based_vehicle_license_plate_recognition_with_KNN_method"> "Histogram Based Vehicle License Plate Recognition with KNN Method" (2017) </a> </li>
+<li> <a href="https://docs.opencv.org/master/d5/d26/tutorial_py_knn_understanding.html"> Understanding OpenCV's KNN Method</a></li>
+<li> <a href="https://docs.opencv.org/2.4/modules/ml/doc/k_nearest_neighbors.html"> OpenCV KNN Documentation</a></li>
+<li> <a href="https://github.com/MicrocontrollersAndMore/OpenCV_3_KNN_Character_Recognition_Cpp/blob/master/GenData/training_chars.png"> Training Image to Generate Data needed for KNN </a> </li>
+<li> <a href="https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/template_matching/template_matching.html"> OpenCV Template Matching Documentation</a> </li>
+<li> <a href="https://docs.opencv.org/3.2.0/dd/de1/classcv_1_1ml_1_1KNearest.html#ab0ce3fa7a242f3418938592f4d935b81"> OpenCV K Nearest Documentation</a> </li>
+
+
+<hr>
+</div>
+</body>
+
+
+
+</html>

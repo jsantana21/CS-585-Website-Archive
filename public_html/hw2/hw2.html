@@ -1,0 +1,215 @@
+<html>
+<head>
+<title> CS585: HW 2 Student: Juan Santana  </title>
+<style>
+<!--
+body{
+font-family: 'Trebuchet MS', Verdana;
+}
+p{
+font-family: 'Trebuchet MS', Times;
+margin: 10px 10px 15px 20px;
+}
+h3{
+margin: 5px;
+}
+h2{
+margin: 10px;
+}
+h1{
+margin: 10px 0px 0px 20px;
+}
+div.main-body{
+align:center;
+margin: 30px;
+}
+hr{
+margin:20px 0px 20px 0px;
+}
+-->
+</style>
+</head>
+
+<body>
+<center>
+<a href="http://www.bu.edu"><img border="0" src="http://www.cs.bu.edu/fac/betke/images/bu-logo.gif"
+width="119" height="120"></a>
+</center>
+
+<h1>HW 2 Hand Gesture Recognition Programming Assignment</h1>
+<p> 
+ CS 585 HW 2 <br>
+ Juan Santana <br>
+ Team Member: Ai Hue Nyguen <br>
+ February 13, 2020 
+</p>
+
+<div class="main-body">
+<hr>
+<h2> Problem Definition </h2>
+<p>
+    Design and implement algorithms that recognize hand shapes (such as making a
+    fist, thumbs up, thumbs down, pointing with an index finger etc.) or gestures
+    (such as waving with one or both hands, swinging, drawing something in the air
+    etc.) and create a graphical display that responds to the recognition of the
+    hand shapes or gestures. 
+    
+    <p> You may use OpenCV library functions in your solution.  If you do so, you
+    must understand the OpenCV function in detail -- both the mathematical
+    formulation and the algorithm.  In particular, you must be able to explain the
+    function on a blackboard without access to the OpenCV help pages.
+    <p>
+
+    <b> The algorithm should detect at least four different hand shapes or gestures.
+        Must also use skin-color detection and binary image analysis (e.g. centroids, orientation, etc.) to distinguish hand shapes or gestures. </b>
+    
+    <p>
+    Create a confusion matrix to illustrate how well your system can classify the
+    hand shapes or gestures.
+    
+    Create a graphical display that responds to the movements
+    of the recognized gestures. The graphics should be tasteful and appropriate to
+    the gestural movements.  Along with the program, submit the following
+    information about your graphics program:
+    
+    <ol>
+    <li> An overall description </li>
+    
+    <li> How the graphics respond to different hand shapes and/or gestures</li>
+    
+    <li> Interesting and fun aspects of the graphics display </li>
+    </ol>
+
+<hr>
+<h2> Method and Implementation </h2>
+<p> General Outline of the Hand Sign Recognition Algorithm</p>
+<p> 
+<ol>
+<li>The primary computer vision we used in this assignment that were discussed in lecture was 
+skin-color detection (e.g., thresholding red and green pixel values) and template matching (e.g., create templates of a closed hand and an open hand). </li>
+
+<li>We first processed the image templates by making skinDetection templates using the mySkinDetect function we learned from Lab 3 
+and then we found the largest coutour in each template so we can then draw the contour and its outline in a new image; that image being the contour image template outlined in green.</li>
+
+<li>The algorithm creates four vector point contour for the four frames we're going to capture from the webcam and apply the skinDetection on these images as well. </li>
+
+<li>It then applies the MatchingMethod we wrote down at the bottom of the file to calculate the contour image from the mySkinDetect webcam frames.</li>
+
+<li>Using the matchShapes function from the OpenCV libary, it calculates an array of four coefficients each representing how similar the webcamera frame is to each corresponding image template.</li>
+
+<li>It then chooses the highest coefficient and deem that to be the most similar image template to the hand gesture shown on the webcamera. </li>
+
+</ol> </br>
+</p>
+
+<hr>
+<h2>Experiments</h2>
+<p>The goal of my experiment is to recongnize four different hand shape, the
+template for each hand shape are listed in the table below</p>
+<table border=1>
+<tr><th>Name</th><th>Image Template</th></tr>
+<tr><td>Okay Hand Sign</td><td><img src="images/okay.jpg" width="100" alt="Okay Hand Sign Template" >
+<tr><td>Rock & Roll Hand Sign</td><td><img src="images/rocknroll.png" width="100" alt="Rock & Roll Hand Sign Template" >
+<tr><td>Peace Hand Sign</td><td><img src="images/peacesign.png" width="100" alt="Peace Hand Sign Template" >
+<tr><td>Thumbs Up Hand Sign</td><td><img src="images/thumbsupsign.jpg" width="100" alt="Thumbs Up Hand Sign Template" >
+</table>
+
+<hr>
+<h2>Experiment Variables</h2>
+<p>
+Experiment Environment: Windows 7 Ultimate x64 Machine </br>
+Applications: Visual Studio 2017 Community Version, OpenCV 3.2, C++ Programming Language </br> 
+Average Exection Time of Code: 10 seconds </br> 
+Process Memory Rate: 75 MBs/second </br> 
+CPU (% of all processors): approx. 70% </br>
+Setting: BU Mugar Memorial Libary 2nd Floor </br>
+</p>
+ 
+
+<hr>
+<h2> Results</h2>
+<p>Here are screeshots of the algorithm recognizing all four hand signs: </br></p>
+<li>Note that the green outlined drawing is the contour image of the template images shown above.</li>
+<li>The red outlined drawing is the contour image of a frame captured live from the webcamera.</li>
+<li>The black screen with the coefficients displayed provide a graphical display of the algorithm calculating 
+the similarity between the live frame image from the webcamera and 
+the image contour template. </li>
+<li>The higher the coefficient the more it matches with of the four templates.</br></li>
+<li>The first coefficient calculates how similar the hand sign is to the first template: the Okay Hand Sign.</br> </li>
+<li>The second coefficient calculates how similar the hand sign is to the second template: the Rock & Roll Hand Sign.</br> </li>
+<li>The third coefficient calculates how similar the hand sign is to the third template: the Peace Hand Sign.</br> </li>
+<li>The fourth coefficient calculates how similar the hand sign is to the fourth template: the Thumbs Up Sign.</br>  </li>
+
+<table border="1">
+<tr><th>Hand Sign Name</th><th>Result</th></tr>
+<tr><td>Okay </td><td><img src="images/okay screen shot.png" width="600" alt="Recongnition of an okay hand sign"></td></tr>
+<tr><td>Rock & Roll</td><td><img src="images/rock screen shot.png" width="600" alt="Recongnition of a rock and roll hand sign"></td></tr>
+<tr><td>Peace</td><td><img src="images/peace screen shot.png" width="600" alt="Recongnition of a peace hand sign"></td></tr>
+<tr><td>Thumbs Up</td><td><img src="images/thumbs up screenshot.png" width="600" alt="Recongnition of a thumb-up hand sign"></td></tr>
+</table>
+
+
+<p> We've a confusion matrix running 40 trials from this experiment by changing our hand signs slightly to see what will the program recognize it as. Here are the results:</p>
+<table border="1">
+<tr><th> </th><th colspan="5">True Class</th></tr>
+<tr><th rowspan="5">Hypothesized Class</th><th>Hand Shape</th><th>Okay</th><th>Peace</th><th>Rock n' Roll</th><th>Thumbs Up</th></tr>
+<tr><th>Okay</th><td>6</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><th>Peace</th><td>2</td><td>7</td><td>3</td><td>1</td></tr>
+<tr><th>Rock n' Roll</th><td>1</td><td>2</td><td>6</td><td>1</td></tr>
+<tr><th>Thumbs Up</th><td>1</td><td>0</td><td>1</td><td>7</td></tr>
+<table>
+
+<p> We also calculated the over accuracy of our algorithm to be the following:</p>
+<em> Accuracy = (6+7+7+6)/40 = 26/40 = 65%</em>
+
+
+<hr>
+<h2> Discussion </h2>
+
+<p> 
+Discuss your method and results:
+<ul>
+
+<li> As can be seen in the experiment results, the accuracy of the recognition is largely dependent on many factors. 
+One of the major factors being the lighting of the background and posture of the hand which made our experiments quite difficult. 
+Thus the accuracy of the programming is heavily depends on the lightning and setting of the experiment environment.</li>
+<li> Due to us going with the template match approach for this assignment, 
+this requried us to make almost the same exact hand gesture / sign as the image contour template inorder for the program to recognize the sign. 
+Thus the program is very precise and sensitive to the slightest change in hand gesture which could result in different outcomes.  </li>
+<li> The program has a hard time recognizing the difference between the Rock & Roll hand sign and the Peace Hand Sign. 
+This is probably because both gestures involve pointing out two fingers. 
+However all four of the hand gestures we've chosen invlove pointing out one finger or more, 
+so this probably confused the algorithm and ultimately lower the overall accuracy of the algorithm. This can be in the confusion matrix above.  </li> 
+
+</ul>
+</p>
+
+<hr>
+<h2> Conclusions </h2>
+
+<p>
+   It can be said that hand gesture recognition algorithms 
+   that use basic skin detection and template matching are more useful in recognizing hand gestures / signs that are vastly different but 
+   has a hard time recognizing hand signs that are subtly different. Thus we can conclude that our program can be improved immensely. 
+   One way to improve our program that comes to mind would be using motion energy templates that way 
+   the user has more freedom to make certain hand gestures and doesn't necessary have to abide exactly by the image contour template.   
+</p>
+
+
+<hr>
+<h2> Credits and Bibliography </h2>
+<p>
+"CAS CS 585 Image and Video Computing: Lectures 3 - 6" by Margrit Betke</br>
+Discussed with teammate Ai Hue Nyguen and TA Yifu Hu</br>
+
+<p>
+Homework Template: <a href="http://www.cs.bu.edu/faculty/betke/cs585/restricted/hw-instructions/cs585-homework-template.html">http://www.cs.bu.edu/faculty/betke/cs585/restricted/hw-instructions/cs585-homework-template.html</a>
+</p>
+
+<hr>
+</div>
+</body>
+
+
+
+</html>

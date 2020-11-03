@@ -1,0 +1,255 @@
+<html>
+<head>
+<title> CS585: HW 3 Student: Juan Santana  </title>
+<style>
+<!--
+body{
+font-family: 'Trebuchet MS', Verdana;
+}
+p{
+font-family: 'Trebuchet MS', Times;
+margin: 10px 10px 15px 20px;
+}
+h3{
+margin: 5px;
+}
+h2{
+margin: 10px;
+}
+h1{
+margin: 10px 0px 0px 20px;
+}
+div.main-body{
+align:center;
+margin: 30px;
+}
+hr{
+margin:20px 0px 20px 0px;
+}
+-->
+</style>
+</head>
+
+<body>
+<center>
+<a href="http://www.bu.edu"><img border="0" src="http://www.cs.bu.edu/fac/betke/images/bu-logo.gif"
+width="119" height="120"></a>
+</center>
+
+<h1>HW 3 Object Shape Analysis and Segmentation Programming Assignment</h1>
+<p> 
+ CS 585 HW 3 <br>
+ Juan Santana <br>
+ Team Member: Ai Hue Nyguen <br>
+ February 24, 2020 
+</p>
+
+<div class="main-body">
+<hr>
+<h2> Problem Definition </h2>
+<p>
+    The goal of this assignment is to design and implement algorithms that delineate objects in video images and analyze their shapes. <br>
+    <br>
+    <b>Problem 1: Binary Image Analysis </b>
+
+    <ol>
+
+<li> Implement a connected component labeling algorithm and
+      apply it to the data below.  Show your results by displaying the detected
+      components/objects with different colors. The recursive connected
+      component labeling algorithm sometimes does not work properly if the image
+      regions are large. See below for an alternate variant of this
+      algorithm. If you have trouble implementing connected component labeling,
+      you may use an OpenCV library function, but you will be assessed a small 5
+      point penalty.
+
+<li> If your output contains a large number of components, apply a technique to
+      reduce the number of components, e.g., filtering by component
+      size, or erosion.
+
+<li> Implement the boundary following algorithm and
+     apply it for the relevant regions/objects.
+
+<li> For each relevant region/object, compute the area, orientation, and circularity
+  (Emin/Emax). Also, identify and count the boundary pixels
+  of each region, and compute compactness, the ratio of the area to the
+  perimeter.
+
+<li> Implement a skeleton finding algorithm.  Apply it to the
+relevant regions/objects.
+
+</ol>
+<p>
+<b>Problem 2: Segmentation </b> 
+<p>
+<ol>
+
+<li> Implement two segmentation algorithms
+      (e.g., absolute or adaptive thresholding, region growing, etc.).  Apply
+      the algorithms to convert your color image sequence input into a binary
+      video output.
+
+<br>
+
+Segmentation can be very challenging. It is acceptable, for this homework, to
+make some decisions to restrict the problem you are trying to solve, for
+example, by defining a region of interest (a "mask") and ignoring portions of
+the image outside of this region.
+
+
+<li> Appy the tools you implemented for part 1 to analyze your data.
+
+
+</ol>
+    
+    
+    
+
+<hr>
+<h2> Method and Implementation </h2>
+<p> General Outline of Binary Image Analysis Algorithm</p>
+<p> 
+<ol>
+<li> We ended up using the OpenCV libary function floodFill as a part of our connected component labeling algorithm. Before using the function, we applied erosion and then dilation (opening) operations on the images to get rid of most of the noise.</li>
+
+<li> For the Boundary following algorithm, we attempted to use the Moore-Neighbor Tracing Algorithm that we learned in class. We're currently having trouble implementing it but plan to update on this later. </li>
+
+<li> Thanks to the use of the moments OpenCV function, we were able to successfully calculate the area, orientation, and circularity (Emin/Emax) and compute compactness, the ratio of the area to the perimeter squared. </li>
+
+<li> In our implementation of the skeleton operation, we knew that it can be with erosion and dilation. Thus, we eroded the image at each iteration and found the union of the current erosion and the opening of the erosion.</li>
+
+
+<li> The OpenCV methods we used include the following: erode, dilate, moments, clone, threshold, etc.</li>
+
+</ol> </br>
+</p>
+
+<p> General Outline of Segmentation Algorithm</p>
+<p> 
+<ol>
+<li> For the first dataset of the pianist, we created getMean() to get the average image of those images frames of the painist.</li>
+
+<li> Including some helper functions we learned in lab such as myMax(), myMin(), and mySkinDetect(), we used these to calculate the difference between one said frame and the average frame.
+Using that difference in both images, we converted it to grayscale and binarized it, inorder to use it as a mask on the raw frame to perform skin detection.</li>
+
+<li> For the second dataset of bats, we attempted to use what we leanred from Part 1 and apply our connected component labeling algorithm to this situation.
+Our results for this part aren't ideal but we hope to come back with an update with better results.</li>
+
+<li> For the third dataset of walking pedestrians, we are only partially successfully here in idientify the people walking using the HOGDescriptor to find boxes for people walking in all the frames.</li>
+
+
+
+</ol> </br>
+</p>
+
+<hr>
+<h2>Experiment Results</h2>
+<p></p>
+<p>Here are our results for the Binary Image Analysis: </p><br>
+
+<table border=1>
+<tr><th>Name</th><th>Orginal Image </th><th>Connected Component Labeling Images</th><th> Boundary Images </th><th> Skeleton Images </th></tr>
+<tr><td> Open-Fist-BW Image</td><td><img src="images/open_fist-bw.png" width="300" alt="Open-Fist-BW Image"><td><img src="images/Open-Fist-BW Image Labelled.png" width="300" alt="Open-Fist-BW Image Labelled"> <td><img src="images/.png" width="300" alt="Open-Fist-BW Image Boundary"><td><img src="images/Open-Fist-BW Image Skeleton.png" width="300" alt="Open-Fist-BW Image Skeleton">
+<tr><td>Open-BW-Full Image</td><td><img src="images/open-bw-full.png" width="300" alt="Open-BW-Full Image"><td><img src="images/Open-BW-Full Image Labelled.png" width="300" alt="Open-BW-Full Image Labelled"> <td><img src="images/.png" width="300" alt="Open-BW-Full Image Boundary"><td><img src="images/Open-BW-Full Image Skeleton.png" width="300" alt="Open-BW-Full Image Skeleton">
+<tr><td>Open-BW-Partial Image</td><td><img src="images/open-bw-partial.png" width="300" alt="Open-BW-Partial Image"> <td><img src="images/Open-BW-Partial Image Labelled.png" width="300" alt="Open-BW-Partial Image Labelled"> <td><img src="images/.png" width="300" alt="Open-BW-Partial Image Boundary"><td><img src="images/Open-BW-Partial Image Skeleton.png" width="300" alt="Open-BW-Partial Image Skeleton">
+<tr><td>Tumor-Fold Image</td><td><img src="images/tumor-fold.png" width="300" alt="Tumor-Fold Image"> <td><img src="images/Tumor Fold Image Labelled.png" width="300" alt="Tumor Fold Image Labelled"><td><img src="images/.png" width="300" alt="Tumor Fold Image Boundary"><td><img src="images/Tumor Fold Image Skeleton.png" width="300" alt="Tumor Fold Image Skeleton">
+</table>
+<p></p>
+As well as our calculations for each of the images: <br>
+<img src="images/calculations_final.png" width="500" alt="Calcualtions Image"> 
+
+<p>Here are our results for the Segmentation Datasets: </p><br>
+<table border=1>
+<tr><th>The Pianist Dataset</th><th>One of the Orginal Image Frames </th><th>Average Frame Image</th><th> Difference Image </th><th> Skin Detection Image </th><th> Binary + Dilalted Skin Detection Image </th><th> Hand Detection Image </th></tr>
+<tr><td> The Pianist</td><td><img src="images/ThePianist.png" width="300" alt="The Pianist Image"><td><img src="images/Avg Frame.png" width="300" alt="Average Image Frame of Pianist"> <td><img src="images/Difference.png" width="300" alt="Difference of Avg Frame and One Frame"><td><img src="images/PianistSkinDetect.png" width="300" alt="Skin Detection of Pianist"><td><img src="images/Contour.png" width="300" alt="Binary + Dilated Skin Detection Image"> <td><img src="images/final_image.png" width="300" alt="Hand Detection of Pianist">
+</table>
+<p></p>
+<table border=1>
+<tr><th>Bat Dataset</th><th>One of the Orginal Image Frames </th><th>Bat Contour Image</th>
+<tr><td> Bats </td><td><img src="images/BatsGray.png" width="300" alt="Bats Flying Image"><td><img src="images/bat_contours.png" width="300" alt="Bats Contour Image">
+</table>
+<p></p>
+<table border=1>
+<tr><th>Walking Pedestrians Dataset</th><th>Walking Pedestrian Detection Image</th> <th>Result Output</th>
+<tr><td> Trial 1 </td><td><img src="images/PedestrianDetection.png" width="300" alt="People Walking Detection Image"><td><img src="images/PedestrianResults.png" width="300" alt="People Walking Detection Results Image"> 
+<tr><td> Trial 2 </td><td><img src="images/PedestrianDetection2.png" width="300" alt="People Walking Detection Image 2"><td><img src="images/PedestrianResults2.png" width="300" alt="People Walking Detection Results Image 2"> 
+<tr><td> Trial 3 </td><td><img src="images/PedestrianDetection3.png" width="300" alt="People Walking Detection Image 3"><td><img src="images/PedestrianResults3.png" width="300" alt="People Walking Detection Results Image 3"> 
+<tr><td> Trial 4 </td><td><img src="images/PedestrianDetection4.png" width="300" alt="People Walking Detection Image 4"><td><img src="images/PedestrianResults4.png" width="300" alt="People Walking Detection Results Image 4"> 
+</table>
+
+
+
+
+<hr>
+<h2>Experiment Variables</h2>
+<p>
+Experiment Environment: Windows 7 Ultimate x64 Machine </br>
+Applications: Visual Studio 2017 Community Version, OpenCV 3.2, C++ Programming Language </br> 
+Average Exection Time of Code: 15 seconds </br> 
+Process Memory Rate: 30 MBs/second </br> 
+CPU (% of all processors): approx. 42% </br>
+Setting: BU Mugar Memorial Libary 2nd Floor </br>
+</p>
+ 
+
+
+
+<hr>
+<h2> Discussion </h2>
+
+<p> 
+Discuss your method and results:
+<ul>
+
+<li> What we noticed about our findings in Part 1 is 
+that it was very hard to get rid of all of the noise and would require erosion operations to get rid of all of the noise.
+So due to the noise left over, it's very likely that our calculations for Tumor Fold Image such as the area, circularity, etc are inaccurate.
+We also noticed obvious things like an image of a fist having a smaller area than an area of an open hand but a higher compactness.</li>
+<li> As for Part 2, we noticed that when it came to the Pianist Dataset that the code has a hard time 
+differentiating the painist's hands and the piano keys as the skin detection interpreted them to be the same thus making the segementation for hand detection even harder. 
+The Bat Dataset was also challenging as well since it required us to learn more about adaptive thresholding while the Pedestrian Dataset had us learning how to use 
+HOGDescriptor find boxes for people walking in all the frames. </li>
+
+</ul>
+</p>
+
+<hr>
+<h2> Conclusions </h2>
+
+<p>
+   After doing both programming assignment parts, 
+   it has been made clear to us that tracking the same objects 
+   over a span of image frames can be very challenging. This programming assignment was by far the most challenging and we felt like we needed more time in perfecting our image analysis code.   
+</p>
+
+
+<hr>
+<h2> Credits and Bibliography </h2>
+<li> "CAS CS 585 Image and Video Computing: Lectures 7 - 10" by Margrit Betke</li>
+<li> Discussed with teammate Ai Hue Nyguen and TA Yifu Hu </li>
+<li>References to equations used for calcualtions in Part 1: <br>
+Circularity Formula: <br>
+<img src="images/circularity formula.png" width="500" alt="Circularity Formula">  <br> </li>
+<li>Orientation Formula: <br>
+<img src="images/orientation formula.png" width="500" alt="Orientation Formula"><br></li>
+<li> Compactness = Perimeter^2 / Area</li>
+<li>Area = Zero Image Moment </li>
+<li> Skeleton Operation:  <a href="https://en.wikipedia.org/wiki/Morphological_skeleton">Morphological Skeleton Wiki Article</a><br>
+<li> Code Reference Used in Parts 1 & 2: </li>
+
+<li> <a href="http://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/contour_tracing_Abeer_George_Ghuneim/moore.html">http://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/contour_tracing_Abeer_George_Ghuneim/moore.html</a><br>
+<li> <a href="https://stackoverflow.com/questions/35668074/how-i-can-take-the-average-of-100-image-using-opencv">https://stackoverflow.com/questions/35668074/how-i-can-take-the-average-of-100-image-using-opencv</a><br>
+<li> <a href="https://www.dreamincode.net/forums/topic/301087-error-in-hog-descriptor-in-opencv/"> https://www.dreamincode.net/forums/topic/301087-error-in-hog-descriptor-in-opencv/</a><br>
+<li> <a href="https://stackoverflow.com/questions/15012073/opencv-draw-draw-contours-of-2-largest-objects">https://stackoverflow.com/questions/15012073/opencv-draw-draw-contours-of-2-largest-objects</a><br>
+<li> <a href="https://stackoverflow.com/questions/22399257/finding-the-center-of-a-contour-using-opencv-and-visual-c">https://stackoverflow.com/questions/22399257/finding-the-center-of-a-contour-using-opencv-and-visual-c</a><br>
+<li> <a href="https://riptutorial.com/opencv/example/22518/circular-blob-detection">https://riptutorial.com/opencv/example/22518/circular-blob-detection</a><br>
+
+<li>Homework Template: <a href="http://www.cs.bu.edu/faculty/betke/cs585/restricted/hw-instructions/cs585-homework-template.html">http://www.cs.bu.edu/faculty/betke/cs585/restricted/hw-instructions/cs585-homework-template.html</a></li>
+
+<hr>
+</div>
+</body>
+
+
+
+</html>

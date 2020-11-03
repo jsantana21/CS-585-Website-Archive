@@ -1,0 +1,156 @@
+<html>
+<head>
+<title> CS585: HW 1 Student: Juan Santana  </title>
+<style>
+<!--
+body{
+font-family: 'Trebuchet MS', Verdana;
+}
+p{
+font-family: 'Trebuchet MS', Times;
+margin: 10px 10px 15px 20px;
+}
+h3{
+margin: 5px;
+}
+h2{
+margin: 10px;
+}
+h1{
+margin: 10px 0px 0px 20px;
+}
+div.main-body{
+align:center;
+margin: 30px;
+}
+hr{
+margin:20px 0px 20px 0px;
+}
+-->
+</style>
+</head>
+
+<body>
+<center>
+<a href="http://www.bu.edu"><img border="0" src="http://www.cs.bu.edu/fac/betke/images/bu-logo.gif"
+width="119" height="120"></a>
+</center>
+
+<h1>HW 1 Image Processing Programming Assignment</h1>
+<p> 
+ CS 585 HW 1 <br>
+ Juan Santana <br>
+ January 30, 2020 
+</p>
+
+<div class="main-body">
+<hr>
+<h2> Problem Definition </h2>
+<p>
+   The goal of this part of the assignment is to further familiarize you with programming with images.</br>
+   Your program should take an image of your face as an input, manipulate it in three ways 
+   and then output the processed face:</br>
+   1. Create a grayscale image of your face by converting your color image using one of the conversions we discussed in class last week.</br>
+   2. Flip your face image horizontally, i.e. left to right, right to left.</br>
+   3. Come up with a third way of manipulating your face that produces an interesting output. 
+   For example, you may create a blurred image of your grayscale face by assigning to each pixel 
+   the average grayscale pixel value of itself and its 8 neighbors. Hint: You may have to run your program 
+   a few times to make the blurring noticeable.</br>
+</p>
+
+<hr>
+<h2> Method and Implementation </h2>
+<p>
+1. In order to create the grayscale image, I used the Gray equation 
+we discussed in lecture "0.3*R + 0.6*G + 0.1*B". It should be noted that the order of pixels in OpenCV is BGR instead of RGB
+so the equation was implemented in my code like this: "0.1*B + 0.6*G + 0.3*R" to interate thorugh each pixel in a nested for-loop to weight the intensities. </br>
+2. Using another nested for-loop for the horzontal flip image, I traversed through all the pixel rows but only through half of the pixel columns. 
+That way I can exchange the intensities of the coressponding pixel on the other half of the image. </br>
+3. Insteading of the blurry image implementation, I came up with my own interesting way of manuplating the image with I instead created a "negative" version of the grayscale image.
+Essentially, all I did was find each pixel's complementary instensity ( 255 - original instensity ) thus finding the "negative" version of the orginal pixel. </br>
+</p>
+
+
+<hr>
+<h2>Experiments</h2>
+<p>
+Experiment Environment: Windows 7 Ultimate x64 Machine </br>
+Applications: Visual Studio 2017 Community Version, OpenCV, C++ Programming Language </br> 
+Average Exection Time of Code: 5 seconds </br> 
+Process Memory Rate: 6 MB/second </br> 
+CPU (% of all processors): approx. 20% </br>
+</p>
+ 
+
+
+
+<hr>
+<h2> Results</h2>
+<p>
+My experimental results are the following:  
+</p>
+
+<p>
+<table>
+<tr><td colspan=3><center><h3>Results</h3></center></td></tr>
+<tr>
+<td> Trial </td><td> Source Image </td> <td> Result Image</td> 
+</tr>
+<tr>
+  <td> Color to Grayscale </td> 
+  <td> <img src="images/selfie.jpg" alt = "selfie image - original"/> </td> 
+  <td> <img src="images/Selfie_Gray_Version.bmp" alt = "selfie image - gray version"/> </td>
+</tr> 
+<tr>
+  <td> Horizontal Flip (i.e. left to right, right to left) </td> 
+  <td> <img src="images/Selfie_Gray_Version.bmp" alt = "selfie image - gray version"/> </td> 
+  <td> <img src="images/Selfie_Horizontal_Flip_Version.bmp" alt = "selfie image - mirror flip version"/> </td>
+</tr> 
+<tr>
+  <td> Grayscale to Negative Grayscale </td> 
+  <td> <img src="images/Selfie_Gray_Version.bmp" alt = "selfie image - gray version"/> </td> 
+  <td> <img src="images/Selfie_Negative_Gray_Version.bmp" alt = "selfie image - negative gray version"/> </td>
+</tr> 
+</table>
+</p>
+
+
+<hr>
+<h2> Discussion </h2>
+
+<p> 
+Discuss your method and results:
+<ul>
+<li> My code for this assignment was fairly simple and straight to the point as I am not used to using C++ and more efficient in a language like Python. </li>
+<li> I got the results that were expected of me in this assignment though I wouldn't say it's the fatest since I used nested for-loops for each section. 
+So when it comes to code time optimzation, I could always work on that in the future.  </li>
+<li> Learing more about C++ and OpenCV could help me solve assignments like these far more efficiently and 
+discover other intesting ways of manpluating images. </li> 
+</ul>
+</p>
+
+<hr>
+<h2> Conclusions </h2>
+
+<p>
+   I've learned that I can manpluate the color and position of the image 
+   by changing the RGB value and the position of the pixel. I've also learned the basic operations of image processing in OpenCV through this assignment.
+</p>
+
+
+<hr>
+<h2> Credits and Bibliography </h2>
+<p>
+Lecture Material: "How to Program with Images" by Diane Theriault & Margrit Betke  </br>
+"CAS CS 585 Image and Video Computing: Lecture 2" by Margrit Betke 
+<p>
+Homework Template: <a href="http://www.cs.bu.edu/faculty/betke/cs585/restricted/hw-instructions/cs585-homework-template.html">http://www.cs.bu.edu/faculty/betke/cs585/restricted/hw-instructions/cs585-homework-template.html</a>
+</p>
+
+<hr>
+</div>
+</body>
+
+
+
+</html>

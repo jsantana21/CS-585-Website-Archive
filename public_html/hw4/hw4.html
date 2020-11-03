@@ -1,0 +1,380 @@
+<html>
+<head>
+<title> CS585: HW 4 Student: Juan Santana  </title>
+<style>
+<!--
+body{
+font-family: 'Trebuchet MS', Verdana;
+}
+p{
+font-family: 'Trebuchet MS', Times;
+margin: 10px 10px 15px 20px;
+}
+h3{
+margin: 5px;
+}
+h2{
+margin: 10px;
+}
+h1{
+margin: 10px 0px 0px 20px;
+}
+div.main-body{
+align:center;
+margin: 30px;
+}
+hr{
+margin:20px 0px 20px 0px;
+}
+div.a {
+  text-indent: 40px;
+}
+-->
+</style>
+</head>
+
+<body>
+<center>
+<a href="http://www.bu.edu"><img border="0" src="http://www.cs.bu.edu/fac/betke/images/bu-logo.gif"
+width="119" height="120"></a>
+</center>
+
+<h1>HW 4 Multiple Object Tracking Programming Assignment</h1>
+<p> 
+ CS 585 HW 4 <br>
+ Juan Santana <br>
+ Team Member: Ai Hue Nguyen <br>
+ April 3, 2020 
+</p>
+
+<div class="main-body">
+<hr>
+<h2> Problem Definition </h2>
+<p>The goal of this part of the programming assignment is for you to learn more about the practical
+  issues that arise when designing a tracking system.  You are asked to track
+  moving objects in video sequences, i.e., identifying the same object from frame to
+  frame:  
+<ul>
+<li> You may consider two frames at a time (or, more ambitiously, use
+  multiple hypothesis tracking (MHT) with more than two frames). </li> 
+<li> You may use a
+  greedy, suboptimal bipartite matching algorithm (or, more ambitiously,
+  implement an optimal data association algorithm).</li>
+<li>
+ To estimate the state of each tracked object, you may use an alpha-beta filter
+ (or, more ambitiously, a Kalman  filter).</li>
+</ul>
+<p>If you decide to use the advanced options (MHT, optimal data association, Kalman filter), you are encouraged to use a 3rd party library.
+
+<p> Two datasets have been provided:
+
+</ol>
+<p>
+<b> Bat Dataset </b> 
+<p>
+<ol>
+ The bat dataset shows bats in flight, where the bats appear bright against a dark sky. WBoth grayscale and false-color images from this thermal image sequence are included; may use whichever images you prefer.
+The segmentation and/or detections for the bat dataset have also been provided. 
+The segmentation of the bat dataset is provided in a set of label maps. 
+There is one number per pixel, delimited by commas. Pixels with the value 0 are background. 
+The maps are 1024 by 1024. The detections are given in a comma delimited file, one for each frame. There is one point per line. Each point is given as the X coordinate followed by the Y coordinate, delimited by commas.<br> 
+
+<tr>
+  <td> <img height="256" src="images/CS585Bats-FalseColorBats.png" alt = "False Color Image of Bats in Flight"/> </td> 
+  <td> <img height="256" src="images/CS585Bats-GrayBats.png" alt = "Gray Image of Bats in Flight"/> </td>
+</tr>
+
+</ol>
+
+</ol>
+<p>
+<b> Cell Dataset </b> 
+<p>
+<ol>
+The cell dataset shows mouse muscle stem cells moving in hydrogel microwells, the brightness of the pixels within the cells are very similar to the values of the background.
+For the cell dataset, no segmentation is provided. 
+It's your task to do both segmentation and tracking. 
+Note: The filopodia, which cells have during migration, are long "feet" that are difficult to outline automatically. 
+Some cells spit into daughter cells. Since accurate cell segmentation is very challenging, to obtain full credit, your focus should be on the multi-object tracking task (and detecting the birth of a new cell), while your segmentation result can be relatively coarse.
+<br>
+<tr>
+  <td> <img height="256" src="images/CS585-Cells.jpg" alt = "Microscopy Image of mouse muscle stem cells"/> </td>
+</tr>
+
+</ol>
+    
+<hr>
+<h2> Method and Implementation </h2>
+<p> <b> General Outline of Tracking Algorithm for the Bat Dataset </b> </p>
+<p> 
+We implemented the Kalman filter and Hungarian algorithm to track the bat dataset. 
+
+<ol>
+<li> First, we converted the file to mat using the function provided to us from Lab 8. </li>
+
+<li> Next, we found the centroids of each bat in the image using the funciton provided to us from Lab 8. </li>
+
+<li> Note that we assumed that if no tracking has happened yet, then every point starts its own track at time 0. </li>
+
+<li> Then, we configured a Kalman filter based on OpenCV's KalmanFilter() inorder to predict every tracking objects' location.</li>
+
+<li> We also configured the Hungarian algorithm based off of code from GitHub & MATLAB to compute the optimal assignment and find detections that minimize the total distance in the track cluster. </li>
+
+<li> We updated the filter's status and attributes so it start new tracks when new objects are detected and removing old tracks when the objects are out of the frame. </li>
+
+<li> Repeat the steps above in a loop until the program has iterated through all the frames in the dataset. </li>
+
+</ol> 
+
+<p> <b> General Outline of Tracking Algorithm for the Cell Dataset </b> </p>
+<p> 
+
+<ol>
+<li> To first perform cell tracking, we first implemented a cell segmentation algorithm. </li>
+
+<li> Next, we specfically implemented a function segmentCells(), which converts a frame to grayscale and uses thresholding to convert the grayscale image to a binary image. </li>
+
+<li> We used function labelCells(), which calls OpenCV’s findContours() method to find the contours in the binary image and draws a red dot on each detected cell.  </li>
+
+<li> Then, to perform the cell tracking, we created a loop to iterate through all frames in the CS585-Cells folder, creating a video effect just like in the bat tracking part.  </li>
+
+<li> We didn't know how to use the KalmanFilter and Hungarian method for the cell dataset so we resort to the alpha-beta filter and the greedy algorithm.</li>
+
+<li> So using alpha-beta, greedy algorithm, and drawPath(), we tried to perform the cell tracking and output the results of the tracking by displaying the detected path of each cell.</li>
+
+<li> Repeat the steps above in a loop until the program has iterated through all the frames in the dataset. </li>
+
+</ol> 
+
+For the bat dataset, we used the provided segmentation and localization text files.
+For the cell dataset, we weren't provided with it's segmentation and localization text files so we had to figure out the segmentation on our own.
+Each object's centroid in the image frame and trajectories was tracked by different color.
+
+</p>
+
+
+<hr>
+<h2>Experiment Results</h2>
+<p></p>
+<p>Here are our results for Tracking the Bats in the Bat Dataset: </p>
+
+<p>Note that the first bat image frame in the bat dataset is numbered 750 and the last one is numbered 900.</p>
+
+<p>
+<table>
+<tr><td colspan=6><center><h3>Results</h3></center></td></tr>
+<tr>
+<td> Frame 750 </td> <td> Frame 775 </td> <td> Frame 800 </td> <td> Frame 825 </td> <td> Frame 850 </td> <td> Frame 875 </td> <td> Frame 900 </td>
+</tr>
+<tr>
+  <td> <img height="256" src="images/Bat Image Frame 750.png" alt = "Bat Image Frame 750"/> </td> 
+  <td> <img height="256" src="images/Bat Image Frame 775.png" alt = "Bat Image Frame 775"/> </td>
+  <td> <img height="256" src="images/Bat Image Frame 800.png" alt = "Bat Image Frame 800"/> </td> 
+  <td> <img height="256" src="images/Bat Image Frame 825.png" alt = "Bat Image Frame 825"/> </td>
+  <td> <img height="256" src="images/Bat Image Frame 850.png" alt = "Bat Image Frame 850"/> </td> 
+  <td> <img height="256" src="images/Bat Image Frame 875.png" alt = "Bat Image Frame 875"/> </td>
+  <td> <img height="256" src="images/Bat Image Frame 900.png" alt = "Bat Image Frame 900"/> </td> 
+</tr> 
+</table>
+</p>
+
+As well as the text output for each bat image frame: <br>
+<img src="images/Bat Image Text Output.png" width="300" alt="Bat Image Text Output"> 
+
+<br>
+
+<p>Here are our results for Tracking the Cells in the Cell Dataset: </p>
+
+<p>Note that the first cell image frame in the bat dataset is numbered 1265 and the last one is numbered 1375.</p>
+
+<br> 
+
+<p>Here are our results for Tracking the cells in the Cell Dataset: </p>
+
+<p>
+<table>
+<tr><td colspan=5><center><h3>Results</h3></center></td></tr>
+<tr>
+<td> Frame 1265 </td> <td> Frame 1290 </td> <td> Frame 1315 </td> <td> Frame 1340 </td> 
+</tr>
+<tr>
+  <td> <img height="256" src="images/Cell Image Frame t1265.png" alt = "Cell Image Frame t1265"/> </td> 
+  <td> <img height="256" src="images/Cell Image Frame t1325.png" alt = "Cell Image Frame t1325"/> </td>
+  <td> <img height="256" src="images/Cell Image Frame t1345.png" alt = "Cell Image Frame t1345"/> </td> 
+  <td> <img height="256" src="images/Cell Image Frame t1355.png" alt = "Cell Image Frame t1355"/> </td>
+ 
+</tr> 
+</table>
+</p>
+
+As well as the text output for each cell image frame: <br>
+<img src="images/Cell Image Text Output.png" width="300" alt="Cell Image Text Output"> <br>
+
+Unfortunately, our code ran into an unknown error at image t1355 that we haven't figured out.
+
+
+
+
+<hr>
+<h2>Experiment Variables</h2>
+<p>
+Experiment Environment: Windows 7 Ultimate x64 Machine </br>
+Applications: Visual Studio 2017 Community Version, OpenCV 3.2, C++ Programming Language </br> 
+Average Exection Time of Code for Bat Dataset: Approx. 32 minutes </br> 
+Average Exection Time of Code for Cell Dataset: Approx. 25 seconds  </br> 
+Process Memory Rate for Bat Dataset Code: 20 MBs/second </br> 
+Process Memory Rate for Cell Dataset Code: 20 MBs/second </br> 
+CPU (% of all processors) for Bat Dataset Code: approx. 90% </br>
+CPU (% of all processors) for Cell Dataset Code: approx. 80% </br>
+Setting: Remotely at Home </br>
+</p>
+ 
+
+
+<hr>
+<h2> Programming Q&As </h2>
+
+<p> In your write-up, you should discuss the following items:
+
+<ol>
+<li> Show your tracking results on some portion of the sequence. In
+  addition to showing your tracking results on an easy portion of the data,
+  identify a challenging situation where your tracker succeeds, and a challenging
+  situation where your tracker fails.</li>
+
+  <div class="a">  
+
+  The tracking results for some portions of the sequence can be found in the Experiment Results. 
+  One challenge we faced and succeeded in drawing clear and visble trajectories for the bats detected.
+  Challenge we faced but failed in was cases of bats not being retracked after an occlusion and the issue of paths being erased
+  when a bat flies over the path of another bat. As for the cell dataset, we succeeded in 
+  segmenting the cells from the background in each frame and creating a video sequence showing the cells moving.
+  We failed however in being able to draw paths for the cells detected as clearly as the paths of the bats. 
+  </div>
+
+
+<li> How do you decide to begin new tracks and terminate old tracks as the objects
+  enter and leave the field of view?</li>
+
+  <div class="a"> 
+
+If there are too many bats, it can be considered an occlusion so if the point reappears as the Kalman Filter predicted, the algorithm goes to where it reappeared.
+If if it doesn't reappear in 10 frames, then the algorithm consider the object lost and so it stops tracking it.
+If there are too little bats, it tracks new centroids. 
+For the cell dataset, a vector kept track of all of the cells previously tracked and in each iteration of the loop, it found the contours of the cells in the current frame. It then 
+check whether each cell detected in the frame has been tracked and if it was it continued to track it. Else if it is a new cell, then a tracked cell is created for it to show that it has been tracked.
+  
+  </div>
+
+
+<li>What happens with your algorithm when objects touch and occlude each other,
+  and how could you handle this so you do not break track?</li>
+
+
+  <div class="a">  
+
+
+Unfortunately, this was one of the challenges we face and failed. 
+In the case when objects touch and occlude each other, one of the object's paths gets erased in the process. 
+We weren't able to fix the break in the track so in the last frame of the bat dataset you do see some break in tracks.
+Our results were even worse for the cell dataset as we couldn't get another tracks for the cells at all.
+
+  </div>
+
+
+<li> What happens when there are spurious detections that do not connect
+  with other measurements in subsequent frames?</li>
+
+
+  <div class="a">  
+
+  This was another challenge / issue that we failed in fixing.
+  There were times where spurious objects were detected by the segemntation algorithm that shouldn't have been tracked
+  potentailly making our results not totally accurate.
+
+  </div>
+
+
+<li>What are the advantages and drawbacks of different
+  kinematic models: Do you need to model the velocity of the objects, or is
+  it sufficient to just consider the distances between the objects in
+  subsequent frames?</li>
+
+
+  <div class="a">  
+
+After running our experiments, we believe that if all the objects in the image frame are moving at the same speed then 
+it is sufficient enough to just consider the distances between the objects in subsequent frames. 
+However in the real world, everything moves at its own speed and inorder to be practical we think that 
+modeling the objects' velocities would be advantageous in making a better kinematic model. 
+This could especially work in the case of the cell dataset. 
+  </div>
+
+
+
+
+</ol>
+</p>
+
+
+
+<hr>
+<h2> Discussion </h2>
+
+<p> Discussing our results:
+<ul>
+<li>  
+For the bat dataset, the Hungarian algorithm with a Kalman filter was relatively successful in creating track trajectories. 
+There's been however cases of bats not being retracked after an occlusion. 
+Another minor issue we came across is that when is a bat flies over the path of another bat then that crossed over path is erased.
+</li>
+<li>  
+For the cell dataset, we weren't able to apply the Hungarian algorithm with a Kalman filter as 
+we weren't provided with the segmentation and localization files for the dataset. One way we thought we could
+overcome this problem would be finding the centroid but it seems our code in that regard still needs work. 
+</li>
+
+</ul>
+</p>
+
+<hr>
+
+
+<h2> Conclusions </h2>
+
+<p>
+ The experiment results show clearly that the Hungarian algorithm, when paired with the Kalman filter produces good tracking trajectories.
+ Besides the few cases of occlusion that causes failures in object retracking, the tracks are clear to see. 
+ If there's one thing we could improve on, it would have to be making a more accurate way to get the object centroid in a image frame so that way 
+ we don't have to rely on the segmentation and localization files of the images. One possible way we could improve our code for the cell dataset 
+ would be to use what we learned from previous homeworks such as use threholding, a connected componenet algorithm, and image operations like erode to pinpoint the centroids more accurately and avoid confusing with new objects in the frame.
+</p>
+
+
+<hr>
+<h2> Credits and Bibliography </h2>
+<li> "CAS CS 585 Image and Video Computing: Lectures 13 - 14" by Prof. Margrit Betke</li>
+<li> CAS CS 585 Image and Video Computing: Labs 7 & 8</li>
+<li> Discussed with teammate Ai Hue Nyguen and TA Yifu Hu </li>
+<li>References to sources used for configuring the Kalman filter and Hungarian algorithm as well as the Alpha-beta Filter: <br>
+
+<li> <a href="https://github.com/mcximing/hungarian-algorithm-cpp/blob/master/Hungarian.h"> Hungarian Method Class </a><br>
+<li> <a href="https://github.com/mcximing/hungarian-algorithm-cpp/blob/master/Hungarian.cpp"></a> Hungarian Method Class Functions<br>
+<li> <a href="http://www.mathworks.com/matlabcentral/fileexchange/6543-functions-for-the-rectangular-assignment-problem"> MATLAB Source of Hungarian GitHub repo Code</a><br>
+<li> <a href="http://docs.opencv.org/master/dd/d6a/classcv_1_1KalmanFilter.html#gsc.tab=0"> OpenCV Documentation on Kalman Filter</a><br>
+<li> <a href="http://www.cs.bu.edu/fac/betke/cs585/restricted/lectures/2020_Kalman_Filter_CS585.pdf"> CS585 Kalman Filter Paper</a><br>
+<li> <a href="http://www.cs.bu.edu/faculty/betke/cs585/restricted/lectures/cs585-bats-2018.pdf"> CS 585 Bat Tracking Presentation</a><br>
+<li> <a href="http://en.wikipedia.org/wiki/Alpha_beta_filter"> Alpha beta Filter Wikipedia Page</a><br>
+<li> <a href="https://en.wikipedia.org/wiki/Kalman_filter"> Kalman Filter Wikipedia Page </a><br>
+<li> <a href="  https://en.wikipedia.org/wiki/Hungarian_algorithm"> Hungarian Algorithm Wikipedia Page </a><br>
+<li> <a href="http://www.cs.bu.edu/faculty/betke/cs585/restricted/lectures/2018-multi-object-tracking.pdf"> CS 585 Multiple-Object Tracking Presentation</a><br>
+
+
+
+<hr>
+</div>
+</body>
+
+
+
+</html>
